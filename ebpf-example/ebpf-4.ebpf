@@ -1,0 +1,10 @@
+1: r2 = 131328
+2: if (r7 == 0) goto 4
+3  r2 = 0
+4: r1 := 131328
+5: if (r7 != 0) goto 7
+6: r1 = r2
+7: if (r1 == 0) goto EXIT
+8: r2 = r10 - 8 
+9: r0 = map_lookup_elem(r1, r2)
+EXIT

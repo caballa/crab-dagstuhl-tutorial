@@ -1,0 +1,32 @@
+cfg("ebpf-pldi19-table3")
+start:
+   havoc(r7:i32) 
+   r4:i64 := 0
+   r5:i64 := r4 + 76
+   r6:i64 := r4 + 80
+   data:i32 := array_load(Context, r5:i64)
+   # If we model pointers to Context as the offset wrt to the start
+   # of the packet then we can set data to 0
+   # assume(data == 0):i32
+   data_end:i32 := array_load(Context, r6:i64)
+   goto bb1
+bb1:
+   r3:i32 := array_load(Context, r6:i64)
+   r1:i32 := array_load(Context, r5:i64)
+   r2:i32 := r1 + r7
+   if (r2 < r1):i32 goto exit else goto bb2
+bb2:
+   r2:i32 := r2 + 8
+   if (r2 > r3):i32 goto exit else goto bb3
+bb3:
+   r1:i32 := r1 + r7
+   EXPECT_EQ(true, assert(r1 >= data):i32)
+   EXPECT_EQ(true, assert(r1 <= data_end-8):i32)
+   goto exit
+exit:
+   zero:i32 := 0
+   zext(r1:i32, r9:i64)
+   array_store(Context, r9:i64, zero:i32)   
+
+
+

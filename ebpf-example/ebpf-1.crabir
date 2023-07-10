@@ -1,0 +1,23 @@
+cfg("ebpf-pldi19-table2")
+start:
+   r4:i64 := 0
+   r5:i64 := r4 + 76
+   r6:i64 := r4 + 80
+   data:i32 := array_load(Context, r5:i64)
+   data_end:i32 := array_load(Context, r6:i64)
+   goto bb1
+bb1:
+   r3:i32 := array_load(Context, r6:i64)
+   r1:i32 := array_load(Context, r5:i64)
+   r2:i32 := r1 + 8
+   if (r2 > r3):i32 goto exit else goto bb2
+bb2:
+   EXPECT_EQ(true, assert(r1 >= data):i32)
+   EXPECT_EQ(true, assert(r1 <= data_end-8):i32)
+   goto exit
+exit:
+   zero:i32 := 0
+   zext(r1:i32, r9:i64)
+   array_store(Context, r9:i64, zero:i32)   
+
+

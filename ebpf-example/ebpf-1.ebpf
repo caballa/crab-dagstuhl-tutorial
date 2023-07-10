@@ -1,0 +1,22 @@
+C code
+
+long *start = (void*) ctx->data;
+long *end = (void*) ctx->data_end;
+if (start + 1 > end) {
+   return;
+}
+*start = 0;
+
+eBPF bytecode
+
+// Precondition: data = *(u32*)(r1+76)
+// Precondition: data_end = *(u32*)(r1+80)
+
+1: r3 = *(u32 *) (r1+80)
+2: r1 = *(u32 *) (r1+76)
+3: r2 = r1 + 8
+4: if r2>r3 goto EXIT
+assert r1>=data && r1<=data_end-8
+5: *(u64 *)(r1) = 0
+EXIT: exit
+

@@ -1,0 +1,32 @@
+cfg("ebpf-pldi19-table4")
+start:
+   # r10 is a read-only registers that points to the top of
+   # the stack
+   r10:i64 := 4096
+   r4:i64 := 0
+   r5:i64 := r4 + 76
+   r6:i64 := r4 + 80
+   data:i32 := array_load(Context, r5:i64)
+   assume(data == 0):i32
+   data_end:i32 := array_load(Context, r6:i64)
+   goto bb1
+bb1:
+   r3:i32 := array_load(Context, r6:i64)
+   r1:i32 := array_load(Context, r5:i64)
+   ## register spilling: r3 is saved in the stack
+   r9:i64 := r10 - 8
+   array_store(Stack, r9:i64, r3:i32)
+   havoc(r3:i32) # r3 is modified to some value
+   r8:i32 := array_load(Stack, r9:i64)
+   r2:i32 := r1 + 8
+   if (r2 > r8):i32 goto exit else goto bb2
+bb2:
+   EXPECT_EQ(true, assert(r1 >= data):i32)
+   EXPECT_EQ(true, assert(r1 <= data_end-8):i32)
+   goto exit
+exit:
+   zero:i32 := 0
+   zext(r1:i32, r9:i64)
+   array_store(Context, r9:i64, zero:i32)   
+
+
