@@ -69,8 +69,9 @@ int main(int argc, char *argv[]) {
   allocWrapInfo.initialize(*M, nullptr);
   seadsa::DsaLibFuncInfo dsaLibFuncInfo;
   dsaLibFuncInfo.initialize(*M);
+  SeaDsaHeapAbstractionParams params;
   std::unique_ptr<HeapAbstraction> mem =
-    std::make_unique<SeaDsaHeapAbstraction>(*M, cg, tliw, allocWrapInfo, dsaLibFuncInfo, true);
+    std::make_unique<SeaDsaHeapAbstraction>(*M, cg, tliw, allocWrapInfo, dsaLibFuncInfo, params);
 
   //////////////////////////////////////  
   // Run Clam inter-procedural analysis
